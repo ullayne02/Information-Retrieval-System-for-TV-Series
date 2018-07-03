@@ -5,14 +5,14 @@ import math
 
 class Ranking(object): 
     def __init__(self): 
-        self.tf = {}
+        self.vec_model = vectorial_model.Vectorial_Model()
         self.idf = {}
         self.tfidf = {}
 
     def query_weightless(self, query):
         r = [1 for x in query]
         return r
-            
+
     def remove_duplicates (self, query): 
         r = []
         for x in query: 
@@ -21,32 +21,39 @@ class Ranking(object):
         return r
     
     def document_weightless(self, query, document): 
-        result = {} 
-        for x in document:
-            r = {} 
-            for y in query:
-                vec = []
-                if y not in document[x].keys(): 
-                    vec = [0 for i in query[y]]
+        vec_model = vectorial_model.Vectorial_Model()  
+        result = {}
+        query = self.build_vec(query)
+        query = self.remove_duplicates(query)
+        
+        for doc in document:
+            cur_doc = self.build_vec(document[doc], document=True, boolean=True)
+            cur_doc = self.remove_duplicates(cur_doc)
+            vec = []
+            for term in query:
+    
+                if(term in cur_doc):
+                    vec.append(1) 
                 else: 
-                    for term in query[y]: 
-                        if term in document[x][y]: 
-                            vec.append(1)
-                        else: 
-                            vec.append(0)
-                r.update({y: vec})
-            result.update({x: r})
-        return result
+                    vec.append(0)
+            result.update({doc: vec})
+        print(result)
+        query_vec = self.query_weightless(query)
+        rank = []
+        for x in result:
+            cos = vec_model.cossine(result[x], query_vec)
+            rank.append((x, cos))
+
+        return rank
     
     def query_weight(self, query): 
-        result = {}
         #query = self.build_vec(query)
         #query = self.remove_duplicates(query)
         r = []
         
         for term in query:
             r.append(query.count(term))
-        print(query, r)
+        #print(query, r)
         return r
     
     def build_vec(self, query, document=False, boolean=False): 
@@ -55,7 +62,7 @@ class Ranking(object):
         #print(query, result)
         for att in query:
             for q in query[att]: 
-                if not document or not boolean:  
+                if not document or boolean:  
                     result.append(q+'.'+att)
                 else:
                     result.append(((q+'.'+att), query[att][q]))
@@ -170,7 +177,8 @@ doc_frec = {'67': {'title': {'doctor': 1}, 'resume': {'doctor': 1}},
 #a = r.query_weight(query)
 #a = r.build_vec(doc_frec['67'], document=True, boolean=False)
 b = r.document_weight(query, doc_frec)
-print(b)
+c = r.document_weightless(query, inverted_file)
+print(c)
     # Duvida: 
     # 
     # como monta o vetor da query e documento (calcular o tfidf dentro da query e fazer que fiz antes)
