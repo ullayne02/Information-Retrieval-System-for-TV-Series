@@ -134,11 +134,11 @@ class Ranking(object):
         diff = abs(conc - disc)
         return diff/k
 
-    def rank(self, query, document, BM25=False, b=0.75, k1=1.25, boolean=False):
+    def rank(self, query, document, BM25=False, b=0.75, k1=1.25, boolean=False, zone_score=False):
         if(not boolean):
-            rank = self.document_weight(query, document, BM25, b, k1)
+            rank = self.document_weight(query, document, BM25, b, k1, zone_score)
         else:
-            rank = self.document_weightless(query, document)
+            rank = self.document_weightless(query, document, zone_score)
         sort = sorted(rank, key=itemgetter(1), reverse=True)
         sort = [x[0] for x in sort]
         return sort
