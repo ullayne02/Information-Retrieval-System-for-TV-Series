@@ -116,7 +116,7 @@ class Ranking(object):
         a = set()
         for i in range(len(rank)):
             for j in range(i+1, len(rank)):
-                a.add((rank[i], rank[j]))
+                a.add((int(rank[i]), int(rank[j])))
         return a
 
     # returns kendal tau correlation between two ranks

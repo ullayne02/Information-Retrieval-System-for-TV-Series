@@ -11,23 +11,36 @@ import os
 #document = iFile.search(query)
 #print(document)
 #result1 = rank.rank(query, document, boolean=True)
-query = {'cast': processor.text('Will Smith, Niel Patrick Harry')}
+query = {'resume': processor.text('Dexter'), 'title': processor.text('Dexter'), 'cast': processor.text('Dexter')}
 
 iFile = index.Frequency()
 iFile.load()
 rank = ranking.Ranking(iFile)
 f = iFile.search(query)
 #print(f)
-a = [576, 20284, 40, 11821, 17065, 676, 1149, 1454, 1502, 1622, 1629, 1643, 1668, 1700, 1892, 1894, 2912, 2940, 3109, 3330, 4000, 4212, 4786, 4795, 4885, 5132, 5160, 5215, 5258, 5467, 6684, 6747, 7199, 7831, 7887, 7908, 8146, 8482, 8620, 9224, 9240, 9665, 10113, 10301, 10394, 10458, 10582, 10800, 10887, 11217, 11278, 11470, 11610, 11847, 11875, 12008, 12560, 12921, 13068, 13115, 13322, 13545, 13641, 14105, 14817, 14935, 16152, 16481, 16574, 16655, 17145, 17360, 17523, 17862, 17965, 18425, 18540, 18700, 18741, 18995, 19468, 19722, 20222, 20355, 20483, 20549, 20617, 20719, 20729, 20767, 20934, 21034, 21105, 21112, 3220, 5321, 15957, 18366, 8798, 12535]
 #doc = {'6385': {'title': {'pretti': 1}, 'resume': {'pretti': 7}}, '626': {'title': {'pretti': 1, 'littl': 1, 'liar': 1}, 'resume': {'pretti': 1, 'littl': 1, 'liar': 1}}, '11988': {'title': {'pretti': 1}}, '4790': {'title': {'pretti': 1}}}
 result2 = rank.rank(query, f)
 result3 = rank.rank(query, f, BM25=True)
 result4 = rank.rank(query, f, zone_score=True)
-print('lala: ', result2[:10])
-print('with bm algorithm: ', result3[:10])
-print(result4[:10])
-print('aaaaaaaaaaaaaa: ', rank.kendaltau_correlation(result2, result3))
+
+fi = index.Basic()
+fi.load()
+
+result5 = rank.rank(query, f, boolean=True)
+result6 = rank.rank(query, f, boolean=True, zone_score=True)
+print('Frequencia: ', result2[:10])
+print('BM25 ', result3[:10])
+print('ZOne score tfidf: ', result4[:10])
+print('boolean: ', result5[:10])
+print('zone score boolean: ', result6[:10])
+
+print('kendau tau between tfidf and BM25: ', rank.kendaltau_correlation(result2, result3))
 print('kendau tau between tfidf and zonesocre:', rank.kendaltau_correlation(result2, result4))
+print('kendau tau between tfidf and boolean:', rank.kendaltau_correlation(result2, result5))
+print('kendau tau between zonescore and boolean:', rank.kendaltau_correlation(result5, result6))
+
+
+
 #print(result)
 # {'67': {'title': {'doctor': [0]}, 'resume': {'doctor': [6]}}, '224': 
 # {'title': {'doctor': [0]}, 'resume': {'doctor': [6]}}, '178': 
