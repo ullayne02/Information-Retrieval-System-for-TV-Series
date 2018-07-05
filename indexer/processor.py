@@ -1,11 +1,14 @@
 from nltk.stem.porter import PorterStemmer
-from nltk.corpus import stopwords
-stopwords.words('english')
+try:
+    from nltk.corpus import stopwords
+    stopwords.words('english')
+except Exception:
+    import nltk
+    nltk.download('wordnet')
+    nltk.download('stopwords')
+    from nltk.corpus import stopwords
+    stopwords.words('english')
 import math, re
-
-# import nltk
-# nltk.download('wordnet')
-# nltk.download('stopwords')
 
 def tokenize(data):
     return data.split()
@@ -81,9 +84,9 @@ def category(data):
     data = [ x.replace(' ', '') for x in data ]
     return [ _categories.get(x, x) for x in data ]
 
-_numbers = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+_numbers = [0, 43, 53, 60, 62, 65, 69, 70, 72, 75, 77, 79, 80, 82, 86, 91, 100]
 def number(data):
     for i, num in enumerate(_numbers):
         if data <= num:
-            return str([i, i+1])
+            return [str([i, i+1])]
     return "[]"
